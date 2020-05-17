@@ -1,48 +1,21 @@
-const currying = (f, len = f.length) => {
-  return (function recur(prevArgs) {
-    return (...curArgs) => {
-      const args = [...prevArgs, ...curArgs];
-      return args.length >= len ? f(...args) : recur(args);
-    };
-  })([]);
-};
-// const currying = f => {
-//   return (a, ...bs) => {
-//     bs.length ? f(a, ...bs) : (...bs) => f(a, ...bs);
-//   };
-// };
-const filter = currying(function* (f, iter) {
-  for (const i of iter) if (f(i)) yield i;
-});
-const map = currying(function* (f, iter) {
-  for (const i of iter) yield f(i);
-});
-const take = currying((len, iter) => {
-  const res = [];
-  for (const i of iter) {
-    res.push(i);
-    if (res.length == len) break;
-  }
-  return res;
-});
-const reduce = currying((f, acc, iter) => {
-  if (iter === undefined) {
-    iter = acc[Symbol.iterator]();
-    acc = iter.next().value;
-  }
-  for (const i of iter) acc = f(acc, i);
-  return acc;
-});
-const pipe = (f1, ...fs) => (...iter) =>
-  reduce((acc, f) => f(acc), f1(...iter), fs);
-const go = (ac, ...fs) => pipe(...fs)(ac);
-// const go = (ac, ...fs) => reduce((acc, f) => f(acc), ac, fs);
+// import {  } from './functional.js';
+const fn = require('./functional.js');
+
+const product = [0, 1, 2, 3, 4, 5];
 
 console.log(
-  go(
-    [0, 1, 2, 3, 4, 5],
-    filter((a) => a > 2),
-    map((a) => a + 2),
-    take(2)
+  fn.go(
+    product,
+    fn.L.filter((a) => a > 2),
+    fn.L.map((a) => a + 2),
+    fn.L.take(2)
+  )
+);
+console.log(
+  fn.go(
+    product,
+    (product) => fn.I.filter((a) => a > 2, product),
+    (filterItems) => fn.I.map((a) => a + 3, filterItems)
+    // fn.I.take(3)
   )
 );
