@@ -9,7 +9,7 @@ const currying = (f, len = f.length) => {
 };
 //* pipe function
 const pipe = (f1, ...fs) => (...iter) =>
-  I.reduce((acc, f) => f(acc), f1(...iter), fs);
+  L.reduce((acc, f) => f(acc), f1(...iter), fs);
 //* go function
 const go = (iter, ...fs) => pipe(...fs)(iter);
 // const go = (ac, ...fs) => reduce((acc, f) => f(acc), ac, fs);
@@ -17,24 +17,30 @@ const go = (iter, ...fs) => pipe(...fs)(iter);
 //* compose function
 const compose = (...fns) => (args) =>
   fns.reduceRight((arg, fn) => fn(arg), args);
-//* head function
-const head = (coll) => coll[Symbol.iterator]().next().value;
+const _push = (val, arr = []) => (arr.push(val), arr);
+
 //* Immediately functional javascript
 const I = {
   //* map function
-  map(fn, iter) {
-    const res = [];
-    for (const item of iter) {
-      res.push(fn(item));
-    }
-    return res;
-  },
+  // map(fn, iter) {
+  //   const res = [];
+  //   for (const item of iter) {
+  //     res.push(fn(item));
+  //   }
+  //   return res;
+  // },
+  map: currying((f, iter) =>
+    L.reduce((acc, cur) => _push(f(cur), acc), [], iter)
+  ),
   //* filter function
-  filter(fn, iter) {
-    const res = [];
-    for (const item of iter) fn(item) && res.push(item);
-    return res;
-  },
+  // filter(fn, iter) {
+  //   const res = [];
+  //   for (const item of iter) fn(item) && res.push(item);
+  //   return res;
+  // },
+  filter: currying((f, iter) =>
+    L.reduce((acc, cur) => (f(cur) ? _push(cur, acc) : acc), [], iter)
+  ),
   //* reduce function
   reduce(fn, acc, coll) {
     if (coll === undefined) {
@@ -71,4 +77,4 @@ const L = {
   }),
 };
 
-module.exports = { currying, compose, pipe, go, head, I, L };
+module.exports = { currying, compose, pipe, go, I, L };
