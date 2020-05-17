@@ -33,12 +33,16 @@ const reduce = currying((f, acc, iter) => {
   for (const i of iter) acc = f(acc, i);
   return acc;
 });
-const go = (ac, ...fs) => reduce((acc, f) => f(acc), ac, fs);
+const pipe = (f1, ...fs) => (...iter) =>
+  reduce((acc, f) => f(acc), f1(...iter), fs);
+const go = (ac, ...fs) => pipe(...fs)(ac);
+// const go = (ac, ...fs) => reduce((acc, f) => f(acc), ac, fs);
+
 console.log(
   go(
     [0, 1, 2, 3, 4, 5],
     filter((a) => a > 2),
     map((a) => a + 2),
-    take(3)
+    take(2)
   )
 );
