@@ -7,49 +7,69 @@ const currying = (f, len = f.length) => {
     };
   })([]);
 };
+//* reduce function
+const reduce = currying((f, acc, iter) => {
+  if (iter === undefined) {
+    iter = acc[Symbol.iterator]();
+    acc = iter.next().value;
+  }
+  for (const i of iter) acc = f(acc, i);
+  return acc;
+});
 //* pipe function
 const pipe = (f1, ...fs) => (...iter) =>
-  L.reduce((acc, f) => f(acc), f1(...iter), fs);
+  reduce((acc, f) => f(acc), f1(...iter), fs);
 //* go function
 const go = (iter, ...fs) => pipe(...fs)(iter);
 // const go = (ac, ...fs) => reduce((acc, f) => f(acc), ac, fs);
-
 //* compose function
 const compose = (...fns) => (args) =>
   fns.reduceRight((arg, fn) => fn(arg), args);
 const _push = (val, arr = []) => (arr.push(val), arr);
 
+//* take function
+const take = currying((len, iter) => {
+  const res = [];
+  for (const i of iter) {
+    res.push(i);
+    if (res.length == len) break;
+  }
+  return res;
+});
+//* takeAll function
+const takeAll = take(Infinity);
+//* head function
+const head = pipe(take(1), ([v]) => v);
+//* find function
+const find = currying((f, coll) => go(coll, L.filter(f), head));
+//* any function
+const any = currying((f, coll) =>
+  go(coll, find(f)) === undefined ? false : true
+);
+//* none function
+const none = currying((f, coll) =>
+  go(coll, find(f)) === undefined ? true : false
+);
+//* every function
+const every = currying((f, coll) =>
+  go(
+    coll,
+    L.map(f),
+    find((a) => a === false)
+  ) === undefined
+    ? true
+    : false
+);
 //* Immediately functional javascript
 const I = {
   //* map function
-  // map(fn, iter) {
-  //   const res = [];
-  //   for (const item of iter) {
-  //     res.push(fn(item));
-  //   }
-  //   return res;
-  // },
   map: currying((f, iter) =>
-    L.reduce((acc, cur) => _push(f(cur), acc), [], iter)
+    reduce((acc, cur) => _push(f(cur), acc), [], iter)
   ),
   //* filter function
-  // filter(fn, iter) {
-  //   const res = [];
-  //   for (const item of iter) fn(item) && res.push(item);
-  //   return res;
-  // },
   filter: currying((f, iter) =>
-    L.reduce((acc, cur) => (f(cur) ? _push(cur, acc) : acc), [], iter)
+    reduce((acc, cur) => (f(cur) ? _push(cur, acc) : acc), [], iter)
   ),
-  //* reduce function
-  reduce(fn, acc, coll) {
-    if (coll === undefined) {
-      coll = acc[Symbol.iterator]();
-      acc = coll.next().value;
-    }
-    for (const item of coll) acc = fn(acc, item);
-    return acc;
-  },
 };
 //* Lazy functional javascript
 const L = {
@@ -59,22 +79,20 @@ const L = {
   map: currying(function* (f, iter) {
     for (const i of iter) yield f(i);
   }),
-  take: currying((len, iter) => {
-    const res = [];
-    for (const i of iter) {
-      res.push(i);
-      if (res.length == len) break;
-    }
-    return res;
-  }),
-  reduce: currying((f, acc, iter) => {
-    if (iter === undefined) {
-      iter = acc[Symbol.iterator]();
-      acc = iter.next().value;
-    }
-    for (const i of iter) acc = f(acc, i);
-    return acc;
-  }),
 };
 
-module.exports = { currying, compose, pipe, go, I, L };
+module.exports = {
+  currying,
+  take,
+  takeAll,
+  find,
+  any,
+  none,
+  every,
+  reduce,
+  compose,
+  pipe,
+  go,
+  I,
+  L,
+};

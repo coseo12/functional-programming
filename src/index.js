@@ -22,6 +22,24 @@ const add = fn.currying((a, b) => a + b);
 const odd = (a) => a % 2;
 const head = (coll) => coll[Symbol.iterator]().next().value;
 
+console.log(
+  fn.go(
+    product,
+    fn.L.filter((a) => a > 2),
+    fn.L.map((a) => a + 2),
+    // fn.every((a) => a === 5)
+    fn.takeAll
+  )
+);
+console.log(
+  fn.go(
+    product,
+    fn.I.filter((a) => a > 2),
+    fn.I.map((a) => a + 3)
+    // fn.I.take(3)
+  )
+);
+
 console.time('immediately');
 fn.go(
   range(0, 10000),
@@ -43,20 +61,3 @@ fn.go(
   console.log
 );
 console.timeEnd('lazy');
-
-// console.log(
-//   fn.go(
-//     product,
-//     fn.L.filter((a) => a > 2),
-//     fn.L.map((a) => a + 2),
-//     fn.L.take(2)
-//   )
-// );
-// console.log(
-//   fn.go(
-//     product,
-//     (product) => fn.I.filter((a) => a > 2, product),
-//     (filterItems) => fn.I.map((a) => a + 3, filterItems)
-//     // fn.I.take(3)
-//   )
-// );
