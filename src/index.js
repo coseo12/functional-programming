@@ -1,2 +1,2 @@
-const fn = require('./functional.js');
+import * as fn from './functional.js';
 console.log(fn);
