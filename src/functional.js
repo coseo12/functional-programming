@@ -14,13 +14,16 @@ export const reduce = curry((f, acc, iter) => {
   return acc;
 });
 export const take = curry((l, iter) => {
-  let res = [];
+  const res = [];
   for (const a of iter) {
     res.push(a);
     if (res.length == l) break;
   }
   return res;
 });
+export const join = curry((sep = ',', iter) =>
+  reduce((a, b) => `${a}${sep}${b}`, iter)
+);
 export const L = {
   map: curry(function* (f, iter) {
     for (const a of iter) yield f(a);
@@ -28,9 +31,15 @@ export const L = {
   filter: curry(function* (f, iter) {
     for (const a of iter) if (f(a)) yield a;
   }),
-  entries: curry(function* () {
+  entries: function* (obj) {
     for (const k in obj) yield [k, obj[k]];
-  }),
+  },
+  keys: function* (obj) {
+    for (const k in obj) yield k;
+  },
+  values: function* (obj) {
+    for (const v of obj) yield v;
+  },
 };
 const takeAll = take(Infinity);
 export const map = curry(pipe(L.map, takeAll));

@@ -1,6 +1,6 @@
 import * as fn from './functional';
 
-const { go, map, filter, take, pipe, reduce, curry, log, L } = fn;
+const { go, map, filter, take, join, pipe, reduce, curry, log, L } = fn;
 
 const add = (a, b) => a + b;
 
@@ -31,24 +31,11 @@ console.timeEnd('');
 
 // TODO: queryStr, join function
 
-const join = curry((sep = ',', iter) =>
-  reduce((a, b) => `${a}${sep}${b}`, iter)
+const queryStr = pipe(
+  L.entries,
+  L.map(([k, v]) => `${k}=${v}`),
+  join('&')
 );
-
-const queryStr = obj =>
-  pipe(
-    obj,
-    // Object.entries,
-    L.entries,
-    // map(([k, v]) => `${k}=${v}`),
-    L.map(([k, v]) => `${k}=${v}`),
-    a => {
-      console.log(a);
-      return a;
-    },
-    // reduce((a, b) => `${a}&${b}`),
-    join('&')
-  );
 
 log(queryStr({ limit: 10, offset: 10, type: 'notice' }));
 
