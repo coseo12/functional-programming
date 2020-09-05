@@ -21,13 +21,13 @@ const LAZY = {
     }
   },
 };
-console.time('');
+console.time('Immediately');
 go(range(10000), take(5), reduce(add), log);
-console.timeEnd('');
+console.timeEnd('Immediately');
 
-console.time('');
+console.time('Lazy');
 go(LAZY.range(10000), take(5), reduce(add), log);
-console.timeEnd('');
+console.timeEnd('Lazy');
 
 // TODO: queryStr, join function
 
@@ -37,16 +37,7 @@ const queryStr = pipe(
   join('&')
 );
 
-log(queryStr({ limit: 10, offset: 10, type: 'notice' }));
-
-const joinTest = function* () {
-  yield 10;
-  yield 20;
-  yield 30;
-  yield 40;
-  yield 50;
-};
-log(join('-', joinTest()));
+log('queryStr: ', queryStr({ limit: 10, offset: 10, type: 'notice' }));
 
 // TODO: take, find function
 const users = [
@@ -60,7 +51,7 @@ const users = [
 
 const find = curry((f, iter) => go(iter, L.filter(f), take(1), ([a]) => a));
 
-console.log(find(u => u.age < 23)(users));
+console.log('find: ', find(u => u.age < 23)(users));
 
 go(
   users,
@@ -69,5 +60,11 @@ go(
   log
 );
 
-log(map(a => a + 10, LAZY.range(4)));
-log(filter(a => a > 2, LAZY.range(4)));
+log(
+  'map: ',
+  map(a => a + 10, LAZY.range(4))
+);
+log(
+  'filter: ',
+  filter(a => a > 2, LAZY.range(4))
+);
