@@ -1,6 +1,20 @@
 import * as fn from './functional';
 
-const { go, map, filter, take, find, join, pipe, reduce, curry, log, L } = fn;
+const {
+  go,
+  map,
+  filter,
+  take,
+  find,
+  some,
+  every,
+  join,
+  pipe,
+  reduce,
+  curry,
+  log,
+  L,
+} = fn;
 
 const add = (a, b) => a + b;
 
@@ -49,7 +63,10 @@ const users = [
   { age: 25 },
 ];
 
-console.log('find: ', find(u => u.age < 23)(users));
+console.log(
+  'find: ',
+  find(u => u.age > 20, users)
+);
 
 go(
   users,
@@ -66,3 +83,5 @@ log(
   'filter: ',
   filter(a => a > 2, LAZY.range(4))
 );
+
+log(reduce((a, b) => a + b, [0, 1, 2, 3, 4, 5]));

@@ -31,6 +31,7 @@ export const L = {
   filter: curry(function* (f, iter) {
     for (const a of iter) if (f(a)) yield a;
   }),
+  find: curry(function* (f, iter) {}),
   entries: function* (obj) {
     for (const k in obj) yield [k, obj[k]];
   },
@@ -42,9 +43,18 @@ export const L = {
   },
 };
 export const takeAll = take(Infinity);
-
+export const takeOne = take(1);
 export const map = curry(pipe(L.map, takeAll));
 export const filter = curry(pipe(L.filter, takeAll));
-export const find = curry((f, iter) =>
-  go(iter, L.filter(f), take(1), ([a]) => a)
+export const find = curry(pipe(L.filter, takeOne, ([a]) => a));
+export const some = curry(
+  pipe(L.filter, takeOne, a => (a.length > 0 ? true : false))
+);
+export const every = curry(
+  pipe(
+    L.map,
+    L.filter(a => !a),
+    takeOne,
+    a => (a.length > 0 ? false : true)
+  )
 );
