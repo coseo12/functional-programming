@@ -1,6 +1,6 @@
 import * as fn from './functional';
 
-const { go, map, filter, pipe, reduce, curry, log, L } = fn;
+const { go, map, filter, take, pipe, reduce, curry, log, L } = fn;
 
 const add = (a, b) => a + b;
 
@@ -21,17 +21,6 @@ const LAZY = {
     }
   },
 };
-export const take = curry((l, iter) => {
-  let res = [];
-  iter = iter[Symbol.iterator]();
-  let cur;
-  while (!(cur = iter.next()).done) {
-    const a = cur.value;
-    res.push(a);
-    if (res.length == l) return res;
-  }
-  return res;
-});
 console.time('');
 go(range(10000), take(5), reduce(add), log);
 console.timeEnd('');
@@ -72,4 +61,26 @@ const joinTest = function* () {
 };
 log(join('-', joinTest()));
 
-// TODO:
+// TODO: take, find function
+const users = [
+  { age: 20 },
+  { age: 21 },
+  { age: 22 },
+  { age: 23 },
+  { age: 24 },
+  { age: 25 },
+];
+
+const find = curry((f, iter) => go(iter, L.filter(f), take(1), ([a]) => a));
+
+console.log(find(u => u.age < 23)(users));
+
+go(
+  users,
+  L.map(u => u.age),
+  find(n => n < 23),
+  log
+);
+
+log(map(a => a + 10, LAZY.range(4)));
+log(filter(a => a > 2, LAZY.range(4)));
