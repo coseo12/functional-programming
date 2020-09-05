@@ -42,8 +42,8 @@ export const L = {
     for (const v of obj) yield v;
   },
 };
-export const takeAll = take(Infinity);
-export const takeOne = take(1);
+const takeAll = take(Infinity);
+const takeOne = take(1);
 export const map = curry(pipe(L.map, takeAll));
 export const filter = curry(pipe(L.filter, takeAll));
 export const find = curry(pipe(L.filter, takeOne, ([a]) => a));
