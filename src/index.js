@@ -1,6 +1,6 @@
 import * as fn from './functional';
 
-const { go, map, filter, take, join, pipe, reduce, curry, log, L } = fn;
+const { go, map, filter, take, find, join, pipe, reduce, curry, log, L } = fn;
 
 const add = (a, b) => a + b;
 
@@ -48,8 +48,6 @@ const users = [
   { age: 24 },
   { age: 25 },
 ];
-
-const find = curry((f, iter) => go(iter, L.filter(f), take(1), ([a]) => a));
 
 console.log('find: ', find(u => u.age < 23)(users));
 
