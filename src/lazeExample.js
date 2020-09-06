@@ -19,7 +19,7 @@ const {
 
 const add = (a, b) => a + b;
 
-export const example = () => {
+export const lazeExample = () => {
   // TODO: Lazy testing
   const range = l => {
     let i = -1;

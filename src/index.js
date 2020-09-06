@@ -1,3 +1,4 @@
-import { example } from './example';
+import { lazeExample } from './lazeExample';
 
-example();
+//* 지연성 예제
+lazeExample();
