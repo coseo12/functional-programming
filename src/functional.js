@@ -24,27 +24,41 @@ export const take = curry((l, iter) => {
 export const join = curry((sep = ',', iter) =>
   reduce((a, b) => `${a}${sep}${b}`, iter)
 );
-export const L = {
-  map: curry(function* (f, iter) {
-    for (const a of iter) yield f(a);
-  }),
-  filter: curry(function* (f, iter) {
-    for (const a of iter) if (f(a)) yield a;
-  }),
-  find: curry(function* (f, iter) {}),
-  entries: function* (obj) {
+export const isIterable = a => a && a[Symbol.iterator];
+export const L = {};
+L.map = curry(function* (f, iter) {
+  for (const a of iter) yield f(a);
+});
+L.filter = curry(function* (f, iter) {
+  for (const a of iter) if (f(a)) yield a;
+});
+(L.find = curry(function* (f, iter) {})),
+  (L.entries = function* (obj) {
     for (const k in obj) yield [k, obj[k]];
-  },
-  keys: function* (obj) {
-    for (const k in obj) yield k;
-  },
-  values: function* (obj) {
-    for (const k in obj) yield obj[k];
-  },
-  flatten: function* (iter) {},
+  });
+L.keys = function* (obj) {
+  for (const k in obj) yield k;
 };
-const takeAll = take(Infinity);
-const takeOne = take(1);
+L.values = function* (obj) {
+  for (const k in obj) yield obj[k];
+};
+L.flatten = function* (iter) {
+  for (const a of iter) {
+    if (isIterable(a)) yield* a;
+    else yield a;
+  }
+};
+L.deepFlat = function* f(iter) {
+  for (const a of iter)
+    if (isIterable(a)) yield* f(a);
+    else yield a;
+};
+L.flatMap = curry(pipe(L.map, L.flatten));
+export const takeAll = take(Infinity);
+export const takeOne = take(1);
 export const map = curry(pipe(L.map, takeAll));
 export const filter = curry(pipe(L.filter, takeAll));
 export const find = curry(pipe(L.filter, takeOne, ([a]) => a));
+export const flatten = pipe(L.flatten, takeAll);
+export const deepFlat = pipe(L.deepFlat, takeAll);
+export const flatMap = curry(pipe(L.flatMap, flatten));

@@ -1,6 +1,21 @@
 import * as fn from './functional';
 
-const { go, map, filter, take, find, join, pipe, reduce, curry, log, L } = fn;
+const {
+  go,
+  map,
+  filter,
+  take,
+  find,
+  flatten,
+  deepFlat,
+  flatMap,
+  join,
+  pipe,
+  reduce,
+  curry,
+  log,
+  L,
+} = fn;
 
 const add = (a, b) => a + b;
 
@@ -79,4 +94,34 @@ log(
   filter(a => a > 2, LAZY.range(4))
 );
 
-// TODO: L.flatten, L.flatMap function
+// TODO: flatten, L.flatten, deepFlat, L.deepFlat function
+const fArr = [
+  [1, 2],
+  [3, 4],
+  [5, 6],
+  [7, 8, 9],
+];
+const fArrD = [1, [2, [3, 4], [[5]]]];
+const it = L.flatten(fArr);
+// log(it.next());
+// log(it.next());
+// log([...it]);
+log(take(3, L.flatten(fArr)));
+log(flatten(fArr));
+log([...L.deepFlat(fArrD)]);
+
+// TODO: flatMap, L.flatMap function
+
+const itLFM = L.flatMap(
+  map(a => a * a),
+  fArr
+);
+const itFM = flatMap(
+  map(a => a * a),
+  fArr
+);
+
+log([...itLFM]);
+log(itFM);
+
+// TODO: 2D Array control
