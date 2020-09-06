@@ -1,6 +1,4 @@
-import * as fn from './functional';
-
-const {
+import {
   go,
   map,
   filter,
@@ -15,7 +13,7 @@ const {
   curry,
   log,
   L,
-} = fn;
+} from './functional';
 
 const add = (a, b) => a + b;
 
