@@ -78,12 +78,12 @@ log(
 );
 console.timeEnd('L find');
 
-go(
-  users,
-  L.map(u => u.age),
-  find(n => n < 23),
-  log
-);
+// go(
+//   users,
+//   L.map(u => u.age),
+//   find(n => n < 23),
+//   log
+// );
 
 log(
   'map: ',
@@ -108,7 +108,7 @@ const it = L.flatten(fArr);
 // log([...it]);
 log(take(3, L.flatten(fArr)));
 log(flatten(fArr));
-log([...L.deepFlat(fArrD)]);
+// log([...L.deepFlat(fArrD)]);
 
 // TODO: flatMap, L.flatMap function
 
@@ -116,12 +116,80 @@ const itLFM = L.flatMap(
   map(a => a * a),
   fArr
 );
-const itFM = flatMap(
-  map(a => a * a),
-  fArr
-);
+// const itFM = flatMap(
+//   map(a => a * a),
+//   fArr
+// );
 
-log([...itLFM]);
-log(itFM);
+log('L flatMap: ', [...itLFM]);
+// log(itFM);
 
 // TODO: 2D Array control
+const arr1 = [
+  [1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [9, 10],
+];
+
+go(
+  arr1,
+  L.flatten,
+  L.filter(a => a % 2),
+  take(3),
+  log
+);
+
+// TODO: 실무적 이터러블 코드
+const items = [
+  {
+    name: 'a',
+    age: 21,
+    family: [
+      { name: 'a1', age: 53 },
+      { name: 'a2', age: 47 },
+      { name: 'a3', age: 16 },
+      { name: 'a4', age: 15 },
+    ],
+  },
+  {
+    name: 'b',
+    age: 24,
+    family: [
+      { name: 'b1', age: 58 },
+      { name: 'b2', age: 51 },
+      { name: 'b3', age: 19 },
+      { name: 'b4', age: 22 },
+    ],
+  },
+  {
+    name: 'c',
+    age: 31,
+    family: [
+      { name: 'c1', age: 64 },
+      { name: 'c2', age: 62 },
+    ],
+  },
+  {
+    name: 'd',
+    age: 20,
+    family: [
+      { name: 'd1', age: 42 },
+      { name: 'd2', age: 42 },
+      { name: 'd3', age: 11 },
+      { name: 'd4', age: 7 },
+    ],
+  },
+];
+
+go(
+  items,
+  // L.map(u => u.family),
+  // L.flatten,
+  L.flatMap(u => u.family),
+  L.filter(u => u.age < 20),
+  L.map(u => u.age),
+  take(3),
+  reduce((a, b) => a + b),
+  log
+);
