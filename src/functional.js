@@ -39,8 +39,9 @@ export const L = {
     for (const k in obj) yield k;
   },
   values: function* (obj) {
-    for (const v of obj) yield v;
+    for (const k in obj) yield obj[k];
   },
+  flatten: function* (iter) {},
 };
 const takeAll = take(Infinity);
 const takeOne = take(1);

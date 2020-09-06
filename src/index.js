@@ -48,6 +48,7 @@ const users = [
   { age: 24 },
   { age: 25 },
 ];
+const user = { name: 'seo', age: 35 };
 
 console.time('I find');
 log(
@@ -77,3 +78,5 @@ log(
   'filter: ',
   filter(a => a > 2, LAZY.range(4))
 );
+
+// TODO: L.flatten, L.flatMap function
