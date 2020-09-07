@@ -32,10 +32,9 @@ L.map = curry(function* (f, iter) {
 L.filter = curry(function* (f, iter) {
   for (const a of iter) if (f(a)) yield a;
 });
-(L.find = curry(function* (f, iter) {})),
-  (L.entries = function* (obj) {
-    for (const k in obj) yield [k, obj[k]];
-  });
+L.entries = function* (obj) {
+  for (const k in obj) yield [k, obj[k]];
+};
 L.keys = function* (obj) {
   for (const k in obj) yield k;
 };
