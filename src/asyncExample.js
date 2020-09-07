@@ -50,4 +50,24 @@ export const asyncExample = () => {
   // r2.then(log);
 
   // TODO: Promise of aspect in synthesis and Monad
+  const g = a => a + 1;
+  const f = a => a * a;
+  // log(f(g(1)));
+  // log(f(g()));
+
+  // Array.of(1)
+  //   .map(g)
+  //   .map(f)
+  //   .forEach(r => log(r));
+
+  // Promise.resolve(1)
+  //   .then(g)
+  //   .then(f)
+  //   .then(r => log(r));
+
+  // TODO: Promise of aspect in Kleisli Composition
+
+  // TODO: Async constrol at go or pipe or reduce
+
+  // TODO: Rule of promise.then
 };
