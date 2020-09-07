@@ -2,6 +2,7 @@ export const log = console.log;
 export const curry = f => (a, ..._) =>
   _.length ? f(a, ..._) : (..._) => f(a, ..._);
 export const go = (...args) => reduce((a, f) => f(a), args);
+export const go1 = (a, f) => (a instanceof Promise ? a.then(f) : f(a));
 export const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
 export const reduce = curry((f, acc, iter) => {
   if (!iter) {
@@ -10,8 +11,13 @@ export const reduce = curry((f, acc, iter) => {
   } else {
     iter = iter[Symbol.iterator]();
   }
-  for (const a of iter) acc = f(acc, a);
-  return acc;
+  return go1(acc, function recur(acc) {
+    for (const a of iter) {
+      acc = f(acc, a);
+      if (acc instanceof Promise) return acc.then(recur);
+    }
+    return acc;
+  });
 });
 export const take = curry((l, iter) => {
   const res = [];

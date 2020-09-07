@@ -89,8 +89,8 @@ export const asyncExample = () => {
 
   // fg(2).then(log);
 
-  users.pop();
-  users.pop();
+  // users.pop();
+  // users.pop();
 
   // fg(2).then(log).catch(log);
   // g(2).then(log).catch(log);
@@ -104,6 +104,44 @@ export const asyncExample = () => {
   // log(r2);
 
   // TODO: Async constrol at go or pipe or reduce
+  // go(
+  //   Promise.resolve(1),
+  //   a => a + 10,
+  //   a => Promise.resolve(a + 100),
+  //   a => a + 1000,
+  //   log
+  // );
+
+  // go(
+  //   Promise.reject('error'),
+  //   a => a + 10,
+  //   a => Promise.resolve(a + 100),
+  //   a => a + 1000,
+  //   log
+  // ).catch(log);
 
   // TODO: Rule of promise.then
+  Promise.resolve(Promise.resolve(Promise.resolve(1))).then(log);
+
+  new Promise(resolve => resolve(new Promise(resolve => resolve(1)))).then(log);
+
+  // TODO: Lazy + Promise - L.map, map, take
+
+  // TODO: Kleisli Composition = L.filter, filter, nop, take
+
+  // TODO: Support in nop of reduce
+
+  // TODO: Lazy + Promise of efficiency
+
+  // TODO: Evaluating to parallel on lazy function [1] C.reduce, C.take
+
+  // TODO: Evaluating to parallel on lazy function [2] C.reduce, C.take
+
+  // TODO: Evaluating to parallel on immediately
+
+  // TODO: Immediately, Lazy, Promise, Combine to parallel
+
+  // TODO: Simplify code
+
+  // TODO: Get efficiency on evaluating to parallel for SQL in Node.js
 };
