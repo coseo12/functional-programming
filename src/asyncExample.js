@@ -44,14 +44,17 @@ export const asyncExample = () => {
   const go1 = (a, f) => (a instanceof Promise ? a.then(f) : f(a));
   const add5 = a => a + 5;
 
-  const r1 = go(10, add5);
+  // const r1 = go(10, add5);
   // log(r1);
-  const r2 = go1(delay100(5), add5);
+  // const r2 = go1(delay100(5), add5);
   // r2.then(log);
 
   // TODO: Promise of aspect in synthesis and Monad
-  const g = a => a + 1;
-  const f = a => a * a;
+  //! f . g
+  //! f(g(x))
+
+  // const g = a => a + 1;
+  // const f = a => a * a;
   // log(f(g(1)));
   // log(f(g()));
 
@@ -66,6 +69,39 @@ export const asyncExample = () => {
   //   .then(r => log(r));
 
   // TODO: Promise of aspect in Kleisli Composition
+  //! f . g
+  //! f(g(x)) = f(g(x))
+  //! f(g(x)) = g(x)
+
+  var users = [
+    { id: 1, name: 'aa' },
+    { id: 2, name: 'bb' },
+    { id: 3, name: 'cc' },
+  ];
+
+  const getUserById = id =>
+    find(u => u.id === id, users) || Promise.reject('Error!');
+
+  const f = ({ name }) => name;
+  const g = getUserById;
+
+  const fg = id => Promise.resolve(id).then(g).then(f);
+
+  // fg(2).then(log);
+
+  users.pop();
+  users.pop();
+
+  // fg(2).then(log).catch(log);
+  // g(2).then(log).catch(log);
+
+  // const fg = id => f(g(id));
+  // const r = fg(2);
+  // log(r);
+  // users.pop();
+  // users.pop();
+  // const r2 = fg(2);
+  // log(r2);
 
   // TODO: Async constrol at go or pipe or reduce
 
