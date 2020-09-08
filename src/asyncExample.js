@@ -173,15 +173,36 @@ export const asyncExample = () => {
   // );
 
   // TODO: Support in nop of reduce
-  go(
-    [1, 2, 3, 4, 5],
-    L.map(a => Promise.resolve(a * a)),
-    L.filter(a => Promise.resolve(a % 2)),
-    reduce((a, b) => a + b),
-    log
-  );
+  // go(
+  //   [1, 2, 3, 4, 5],
+  //   L.map(a => Promise.resolve(a * a)),
+  //   L.filter(a => Promise.resolve(a % 2)),
+  //   reduce((a, b) => a + b),
+  //   log
+  // );
 
   // TODO: Lazy + Promise of efficiency
+  // go(
+  //   [1, 2, 3, 4, 5, 6, 7, 8],
+  //   L.map(a => {
+  //     log('map', a);
+  //     return new Promise(resolve =>
+  //       setTimeout(() => {
+  //         resolve(a * a);
+  //       }, 1000)
+  //     );
+  //   }),
+  //   L.filter(a => {
+  //     log('filter', a);
+  //     return new Promise(resolve =>
+  //       setTimeout(() => {
+  //         resolve(a % 2);
+  //       }, 1000)
+  //     );
+  //   }),
+  //   take(2),
+  //   log
+  // );
 
   // TODO: Evaluating to parallel on lazy function [1] C.reduce, C.take
 
