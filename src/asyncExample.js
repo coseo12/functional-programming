@@ -13,6 +13,7 @@ import {
   curry,
   log,
   L,
+  C,
 } from './functional';
 
 export const asyncExample = () => {
@@ -172,6 +173,13 @@ export const asyncExample = () => {
   // );
 
   // TODO: Support in nop of reduce
+  go(
+    [1, 2, 3, 4, 5],
+    L.map(a => Promise.resolve(a * a)),
+    L.filter(a => Promise.resolve(a % 2)),
+    reduce((a, b) => a + b),
+    log
+  );
 
   // TODO: Lazy + Promise of efficiency
 

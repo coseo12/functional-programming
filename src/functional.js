@@ -1,4 +1,12 @@
 const nop = Symbol('nop');
+const reduceF = (acc, a, f) =>
+  a instanceof Promise
+    ? a.then(
+        a => f(acc, a),
+        e => (e === nop ? acc : Promise.reject(e))
+      )
+    : f(acc, a);
+const head = iter => go1(take(1, iter), ([h]) => h);
 export const log = console.log;
 export const curry = f => (a, ..._) =>
   _.length ? f(a, ..._) : (..._) => f(a, ..._);
@@ -6,15 +14,13 @@ export const go = (...args) => reduce((a, f) => f(a), args);
 export const go1 = (a, f) => (a instanceof Promise ? a.then(f) : f(a));
 export const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
 export const reduce = curry((f, acc, iter) => {
-  if (!iter) {
-    iter = acc[Symbol.iterator]();
-    acc = iter.next().value;
-  } else {
-    iter = iter[Symbol.iterator]();
-  }
+  if (!iter) return reduce(f, head((iter = acc[Symbol.iterator]())), iter);
+
+  iter = iter[Symbol.iterator]();
   return go1(acc, function recur(acc) {
-    for (const a of iter) {
-      acc = f(acc, a);
+    let cur;
+    while (!(cur = iter.next()).done) {
+      acc = reduceF(acc, cur.value, f);
       if (acc instanceof Promise) return acc.then(recur);
     }
     return acc;
@@ -73,6 +79,7 @@ L.deepFlat = function* f(iter) {
     else yield a;
 };
 L.flatMap = curry(pipe(L.map, L.flatten));
+export const C = {};
 export const takeAll = take(Infinity);
 export const takeOne = take(1);
 export const map = curry(pipe(L.map, takeAll));
