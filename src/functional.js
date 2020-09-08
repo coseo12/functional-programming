@@ -21,11 +21,18 @@ export const reduce = curry((f, acc, iter) => {
 });
 export const take = curry((l, iter) => {
   const res = [];
-  for (const a of iter) {
-    res.push(a);
-    if (res.length == l) break;
-  }
-  return res;
+  iter = iter[Symbol.iterator]();
+  return (function recur() {
+    let cur;
+    while (!(cur = iter.next()).done) {
+      const a = cur.value;
+      if (a instanceof Promise)
+        return a.then(a => ((res.push(a), res).length === l ? res : recur()));
+      res.push(a);
+      if (res.length === l) return res;
+    }
+    return res;
+  })();
 });
 export const join = curry((sep = ',', iter) =>
   reduce((a, b) => `${a}${sep}${b}`, iter)
@@ -33,7 +40,7 @@ export const join = curry((sep = ',', iter) =>
 export const isIterable = a => a && a[Symbol.iterator];
 export const L = {};
 L.map = curry(function* (f, iter) {
-  for (const a of iter) yield f(a);
+  for (const a of iter) yield go1(a, f);
 });
 L.filter = curry(function* (f, iter) {
   for (const a of iter) if (f(a)) yield a;

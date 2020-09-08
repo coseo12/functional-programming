@@ -121,11 +121,30 @@ export const asyncExample = () => {
   // ).catch(log);
 
   // TODO: Rule of promise.then
-  Promise.resolve(Promise.resolve(Promise.resolve(1))).then(log);
-
-  new Promise(resolve => resolve(new Promise(resolve => resolve(1)))).then(log);
+  // Promise.resolve(Promise.resolve(Promise.resolve(1))).then(log);
+  // new Promise(resolve => resolve(new Promise(resolve => resolve(1)))).then(log);
 
   // TODO: Lazy + Promise - L.map, map, take
+  // go(
+  //   [Promise.resolve(1), Promise.resolve(2), Promise.resolve(3)],
+  //   L.map(a => Promise.resolve(a + 10)),
+  //   take(2),
+  //   log
+  // );
+
+  // go(
+  //   [1, 2, 3],
+  //   L.map(a => Promise.resolve(a + 10)),
+  //   take(2),
+  //   log
+  // );
+
+  // go(
+  //   [Promise.resolve(1), Promise.resolve(2), Promise.resolve(3)],
+  //   L.map(a => a + 10),
+  //   take(2),
+  //   log
+  // );
 
   // TODO: Kleisli Composition = L.filter, filter, nop, take
 
