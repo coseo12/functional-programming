@@ -1,3 +1,4 @@
+const nop = Symbol('nop');
 export const log = console.log;
 export const curry = f => (a, ..._) =>
   _.length ? f(a, ..._) : (..._) => f(a, ..._);
@@ -27,7 +28,9 @@ export const take = curry((l, iter) => {
     while (!(cur = iter.next()).done) {
       const a = cur.value;
       if (a instanceof Promise)
-        return a.then(a => ((res.push(a), res).length === l ? res : recur()));
+        return a
+          .then(a => ((res.push(a), res).length === l ? res : recur()))
+          .catch(e => (e === nop ? recur() : Promise.reject(e)));
       res.push(a);
       if (res.length === l) return res;
     }
@@ -43,7 +46,11 @@ L.map = curry(function* (f, iter) {
   for (const a of iter) yield go1(a, f);
 });
 L.filter = curry(function* (f, iter) {
-  for (const a of iter) if (f(a)) yield a;
+  for (const a of iter) {
+    const b = go1(a, f);
+    if (b instanceof Promise) yield b.then(b => (b ? a : Promise.reject(nop)));
+    else if (b) yield a;
+  }
 });
 L.entries = function* (obj) {
   for (const k in obj) yield [k, obj[k]];

@@ -147,6 +147,29 @@ export const asyncExample = () => {
   // );
 
   // TODO: Kleisli Composition = L.filter, filter, nop, take
+  // go(
+  //   [1, 2, 3, 4, 5, 6],
+  //   L.map(a => Promise.resolve(a * a)),
+  //   L.filter(a => a % 2),
+  //   take(3),
+  //   log
+  // );
+
+  // go(
+  //   [1, 2, 3, 4, 5, 6],
+  //   L.map(a => Promise.resolve(a * a)),
+  //   L.filter(a => Promise.resolve(a % 2)),
+  //   take(3),
+  //   log
+  // );
+
+  // go(
+  //   [1, 2, 3, 4, 5, 6],
+  //   L.map(a => a * a),
+  //   L.filter(a => Promise.resolve(a % 2)),
+  //   take(3),
+  //   log
+  // );
 
   // TODO: Support in nop of reduce
 
