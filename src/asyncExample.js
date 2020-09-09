@@ -240,8 +240,69 @@ export const asyncExample = () => {
   // C.filter(a => delay1000(a % 2), [1, 2, 3, 4, 5]).then(log);
 
   // TODO: Immediately, Lazy, Promise, Combine to parallel
+  const delay500 = (a, name) =>
+    new Promise(resolve => {
+      console.log(`${name}: ${a}`);
+      setTimeout(() => resolve(a), 500);
+    });
 
-  // TODO: Simplify code
+  // console.time('');
+  // go(
+  //   [1, 2, 3, 4, 5, 6, 7, 8],
+  //   map(a => delay500(a * a, 'map1')),
+  //   filter(a => delay500(a % 2, 'filter2')),
+  //   map(a => delay500(a + 1, 'map3')),
+  //   take(2),
+  //   log,
+  //   _ => console.timeEnd('')
+  // );
 
-  // TODO: Get efficiency on evaluating to parallel for SQL in Node.js
+  // console.time('');
+  // go(
+  //   [1, 2, 3, 4, 5, 6, 7, 8],
+  //   L.map(a => delay500(a * a, 'map1')),
+  //   L.filter(a => delay500(a % 2, 'filter2')),
+  //   L.map(a => delay500(a + 1, 'map3')),
+  //   take(2),
+  //   log,
+  //   _ => console.timeEnd('')
+  // );
+
+  // console.time('');
+  // go(
+  //   [1, 2, 3, 4, 5, 6, 7, 8],
+  //   L.map(a => delay500(a * a, 'map1')),
+  //   L.filter(a => delay500(a % 2, 'filter2')),
+  //   L.map(a => delay500(a + 1, 'map3')),
+  //   // take(2),
+  //   C.reduce((a, b) => a + b),
+  //   log,
+  //   _ => console.timeEnd('')
+  // );
+
+  //? Simplify code
+  //? Get efficiency on evaluating to parallel for SQL in Node.js
+  // TODO: Async, Await
+  const delay = a => new Promise(resolve => setTimeout(() => resolve(a), 500));
+
+  const f1 = async () => {
+    const a = await delay(10);
+    const b = await delay(20);
+    log(a + b);
+  };
+  f1();
 };
+
+//* QnA. Array.prototype.map 이 있는데 왜 FxJS 의 map 함수가 필요한가?
+
+//* QnA.
+
+//* QnA.
+
+//* QnA.
+
+//* QnA.
+
+//* QnA.
+
+//* QnA.
