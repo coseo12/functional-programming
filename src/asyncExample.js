@@ -204,11 +204,40 @@ export const asyncExample = () => {
   //   log
   // );
 
-  // TODO: Evaluating to parallel on lazy function [1] C.reduce, C.take
+  // TODO: Evaluating to parallel on lazy function : C.reduce, C.take
+  const delay1000 = a =>
+    new Promise(resolve => {
+      setTimeout(() => resolve(a), 1000);
+    });
 
-  // TODO: Evaluating to parallel on lazy function [2] C.reduce, C.take
+  // console.time('reduce');
+  // go(
+  //   [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  //   L.map(a => delay1000(a * a)),
+  //   L.filter(a => a % 2),
+  //   reduce((a, b) => a + b),
+  //   log,
+  //   _ => console.timeEnd('reduce')
+  // );
 
-  // TODO: Evaluating to parallel on immediately
+  // console.time('C.reduce');
+  // go(
+  //   [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  //   L.map(a => delay1000(a * a)),
+  //   L.filter(a => delay1000(a % 2)),
+  //   // C.take(2),
+  //   // reduce((a, b) => a + b),
+  //   C.reduce((a, b) => a + b),
+  //   log,
+  //   _ => console.timeEnd('C.reduce')
+  // );
+
+  // TODO: Evaluating to parallel on immediately : C.map, C.filter
+
+  // map(a => delay1000(a * a), [1, 2, 3, 4, 5]).then(log);
+  // C.map(a => delay1000(a * a), [1, 2, 3, 4, 5]).then(log);
+  // filter(a => delay1000(a % 2), [1, 2, 3, 4, 5]).then(log);
+  // C.filter(a => delay1000(a % 2), [1, 2, 3, 4, 5]).then(log);
 
   // TODO: Immediately, Lazy, Promise, Combine to parallel
 

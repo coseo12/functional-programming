@@ -1,3 +1,9 @@
+export const log = console.log;
+export const curry = f => (a, ..._) =>
+  _.length ? f(a, ..._) : (..._) => f(a, ..._);
+export const go = (...args) => reduce((a, f) => f(a), args);
+export const go1 = (a, f) => (a instanceof Promise ? a.then(f) : f(a));
+export const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
 const nop = Symbol('nop');
 const reduceF = (acc, a, f) =>
   a instanceof Promise
@@ -7,15 +13,8 @@ const reduceF = (acc, a, f) =>
       )
     : f(acc, a);
 const head = iter => go1(take(1, iter), ([h]) => h);
-export const log = console.log;
-export const curry = f => (a, ..._) =>
-  _.length ? f(a, ..._) : (..._) => f(a, ..._);
-export const go = (...args) => reduce((a, f) => f(a), args);
-export const go1 = (a, f) => (a instanceof Promise ? a.then(f) : f(a));
-export const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
 export const reduce = curry((f, acc, iter) => {
   if (!iter) return reduce(f, head((iter = acc[Symbol.iterator]())), iter);
-
   iter = iter[Symbol.iterator]();
   return go1(acc, function recur(acc) {
     let cur;
@@ -80,6 +79,19 @@ L.deepFlat = function* f(iter) {
 };
 L.flatMap = curry(pipe(L.map, L.flatten));
 export const C = {};
+const noop = () => {};
+const catchNoop = arr => {
+  arr.forEach(a => (a instanceof Promise ? a.catch(noop) : a));
+  return arr;
+};
+C.reduce = curry((f, acc, iter) => {
+  const iter2 = catchNoop(iter ? [...iter] : [...acc]);
+  return iter ? reduce(f, acc, iter2) : reduce(f, iter2);
+});
+C.take = curry((l, iter) => take(l, catchNoop([...iter])));
+C.takeAll = C.take(Infinity);
+C.map = curry(pipe(L.map, C.takeAll));
+C.filter = curry(pipe(L.filter, C.takeAll));
 export const takeAll = take(Infinity);
 export const takeOne = take(1);
 export const map = curry(pipe(L.map, takeAll));
