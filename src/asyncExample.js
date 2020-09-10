@@ -285,24 +285,134 @@ export const asyncExample = () => {
   // TODO: Async, Await
   const delay = a => new Promise(resolve => setTimeout(() => resolve(a), 500));
 
-  const f1 = async () => {
-    const a = await delay(10);
-    const b = await delay(20);
-    log(a + b);
+  // const f1 = async () => {
+  //   const a = await delay(10);
+  //   const b = await delay(20);
+  //   log(a + b);
+  // };
+  // f1();
+
+  //* QnA. Array.prototype.map 이 있는데 왜 FxJS 의 map 함수가 필요한가?
+  const delayI = a => new Promise(resolve => setTimeout(() => resolve(a), 1));
+
+  const f2 = async () => {
+    const list = [1, 2, 3, 4];
+    const res = await list.map(a => delayI(a * a));
+    log(res);
   };
-  f1();
+  // f2();
+
+  const f3 = async () => {
+    const list = [1, 2, 3, 4];
+    const res = await map(a => delayI(a * a), list);
+    log(res);
+  };
+  // f3();
+
+  //* QnA. 이제 비동기는 async, await으로 제어할 수 있는데 왜 파이프라인이 필요한가?
+  const list = [1, 2, 3, 4, 5, 6, 7, 8];
+
+  const f5 = list =>
+    go(
+      list,
+      L.map(a => delayI(a * a)),
+      L.filter(a => delayI(a % 2)),
+      L.map(a => delayI(a + 1)),
+      take(3),
+      reduce((a, b) => delayI(a + b))
+    );
+
+  // log(f5(list));
+  // go(f5(list), log);
+
+  const f6 = async list => {
+    const tmp = [];
+    for (const a of list) {
+      const b = await delayI(a * a);
+      if (await delayI(b % 2)) {
+        const c = await delayI(b + 1);
+        tmp.push(c);
+        if (tmp.length === 3) break;
+      }
+    }
+    let res = 0;
+    for (const d of tmp) {
+      res = await delayI(res + d);
+    }
+    return res;
+  };
+
+  // log(f6(list));
+  // go(f6(list), log);
+
+  //* QnA. async, await 와 파이프라인을 같이 사용하기도 하는가?
+
+  const f52 = async list => {
+    const r1 = await go(
+      list,
+      L.map(a => delayI(a * a)),
+      L.filter(a => delayI(a % 2)),
+      L.map(a => delayI(a + 1)),
+      take(3),
+      reduce((a, b) => delayI(a + b))
+    );
+    const r2 = await await go(
+      list,
+      L.map(a => delayI(a * a)),
+      L.filter(a => delayI(a % 2)),
+      L.map(a => delayI(a + 1)),
+      take(3),
+      reduce((a, b) => delayI(a + b))
+    );
+
+    const r3 = await delayI(r1 + r2);
+    return r3 + 10;
+  };
+
+  // go(f52(list), log);
+
+  //* QnA. 동기 상황에서 에러 핸들링은 어떻게 해야 하는가?
+  const f7 = list => {
+    try {
+      return list
+        .map(a => a + 10)
+        .filter(a => a % 2)
+        .slice(0, 2);
+    } catch (error) {
+      return [];
+    }
+  };
+
+  // log(f7(null));
+
+  //* QnA. 비동기 상황에서 에러 핸들링은 어떻게 해야 하는가?
+  const f8 = list => {
+    try {
+      return list
+        .map(a => new Promise(resolve => resolve(JSON.parse(a))))
+        .filter(a => a % 2)
+        .slice(0, 2);
+    } catch (error) {
+      return [];
+    }
+  };
+
+  // log(f8(['1', '2', '3', '4', '{']));
+  //* QnA. 동기 / 비동기 에러 핸들링에서의 파이프라인의 이점은?
+  const f9 = async list => {
+    try {
+      return await go(
+        list,
+        map(a => new Promise(resolve => resolve(JSON.parse(a)))),
+        filter(a => a % 2),
+        take(2)
+      );
+    } catch (error) {
+      console.log('---');
+      return [];
+    }
+  };
+  f9(['1', '2', '{']).then(log);
+  // .catch(e => log('???'));
+  // log(f9(['1', '2', '3', '4', '{']));
 };
-
-//* QnA. Array.prototype.map 이 있는데 왜 FxJS 의 map 함수가 필요한가?
-
-//* QnA.
-
-//* QnA.
-
-//* QnA.
-
-//* QnA.
-
-//* QnA.
-
-//* QnA.
