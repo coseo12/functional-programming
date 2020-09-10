@@ -412,7 +412,7 @@ export const asyncExample = () => {
       return [];
     }
   };
-  f9(['1', '2', '{']).then(log);
+  // f9(['1', '2', '{']).then(log);
   // .catch(e => log('???'));
   // log(f9(['1', '2', '3', '4', '{']));
 };
