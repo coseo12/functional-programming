@@ -1,19 +1,4 @@
-import {
-  go,
-  map,
-  filter,
-  take,
-  find,
-  flatten,
-  deepFlat,
-  flatMap,
-  join,
-  pipe,
-  reduce,
-  curry,
-  log,
-  L,
-} from './functional';
+import { _, log, L } from './functional';
 
 const add = (a, b) => a + b;
 
@@ -36,19 +21,19 @@ export const lazeExample = () => {
     },
   };
   // console.time('Immediately');
-  // go(range(10000), take(5), reduce(add), log);
+  // _.go(range(10000), _.take(5), _.reduce(add), log);
   // console.timeEnd('Immediately');
 
   // console.time('Lazy');
-  // go(LAZY.range(10000), take(5), reduce(add), log);
+  // _.go(LAZY.range(10000), _.take(5), _.reduce(add), log);
   // console.timeEnd('Lazy');
 
   // TODO: queryStr, join function
 
-  const queryStr = pipe(
+  const queryStr = _.pipe(
     L.entries,
     L.map(([k, v]) => `${k}=${v}`),
-    join('&')
+    _.join('&')
   );
 
   // log('queryStr: ', queryStr({ limit: 10, offset: 10, type: 'notice' }));
@@ -73,24 +58,24 @@ export const lazeExample = () => {
   // console.time('L find');
   // log(
   //   'L find: ',
-  //   find(u => u.age > 20, users)
+  //   _.find(u => u.age > 20, users)
   // );
   // console.timeEnd('L find');
 
-  // go(
+  // _.go(
   //   users,
   //   L.map(u => u.age),
-  //   find(n => n < 23),
+  //   _.find(n => n < 23),
   //   log
   // );
 
   // log(
   //   'map: ',
-  //   map(a => a + 10, LAZY.range(4))
+  //   _.map(a => a + 10, LAZY.range(4))
   // );
   // log(
   //   'filter: ',
-  //   filter(a => a > 2, LAZY.range(4))
+  //   _.filter(a => a > 2, LAZY.range(4))
   // );
 
   // TODO: flatten, L.flatten, deepFlat, L.deepFlat function
@@ -105,14 +90,14 @@ export const lazeExample = () => {
   // log(it.next());
   // log(it.next());
   // log([...it]);
-  // log(take(3, L.flatten(fArr)));
-  // log(flatten(fArr));
+  // log(_.take(3, L.flatten(fArr)));
+  // log(_.flatten(fArr));
   // log([...L.deepFlat(fArrD)]);
 
   // TODO: flatMap, L.flatMap function
 
   const itLFM = L.flatMap(
-    map(a => a * a),
+    _.map(a => a * a),
     fArr
   );
   // const itFM = flatMap(
@@ -131,11 +116,11 @@ export const lazeExample = () => {
     [9, 10],
   ];
 
-  go(
+  _.go(
     arr1,
     L.flatten,
     L.filter(a => a % 2),
-    take(3)
+    _.take(3)
     // log
   );
 
@@ -181,15 +166,15 @@ export const lazeExample = () => {
     },
   ];
 
-  go(
+  _.go(
     items,
     // L.map(u => u.family),
     // L.flatten,
     L.flatMap(u => u.family),
     L.filter(u => u.age < 20),
     L.map(u => u.age),
-    take(3),
-    reduce((a, b) => a + b)
+    _.take(3),
+    _.reduce((a, b) => a + b)
     // log
   );
 };

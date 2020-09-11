@@ -1,9 +1,9 @@
+export const _ = {};
 export const log = console.log;
-export const curry = f => (a, ..._) =>
-  _.length ? f(a, ..._) : (..._) => f(a, ..._);
-export const go = (...args) => reduce((a, f) => f(a), args);
-export const go1 = (a, f) => (a instanceof Promise ? a.then(f) : f(a));
-export const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
+_.curry = f => (a, ..._) => (_.length ? f(a, ..._) : (..._) => f(a, ..._));
+_.go = (...args) => _.reduce((a, f) => f(a), args);
+_.go1 = (a, f) => (a instanceof Promise ? a.then(f) : f(a));
+_.pipe = (f, ...fs) => (...as) => _.go(f(...as), ...fs);
 const nop = Symbol('nop');
 const reduceF = (acc, a, f) =>
   a instanceof Promise
@@ -12,11 +12,11 @@ const reduceF = (acc, a, f) =>
         e => (e === nop ? acc : Promise.reject(e))
       )
     : f(acc, a);
-const head = iter => go1(take(1, iter), ([h]) => h);
-export const reduce = curry((f, acc, iter) => {
-  if (!iter) return reduce(f, head((iter = acc[Symbol.iterator]())), iter);
+const head = iter => _.go1(_.take(1, iter), ([h]) => h);
+_.reduce = _.curry((f, acc, iter) => {
+  if (!iter) return _.reduce(f, head((iter = acc[Symbol.iterator]())), iter);
   iter = iter[Symbol.iterator]();
-  return go1(acc, function recur(acc) {
+  return _.go1(acc, function recur(acc) {
     let cur;
     while (!(cur = iter.next()).done) {
       acc = reduceF(acc, cur.value, f);
@@ -25,7 +25,7 @@ export const reduce = curry((f, acc, iter) => {
     return acc;
   });
 });
-export const take = curry((l, iter) => {
+_.take = _.curry((l, iter) => {
   const res = [];
   iter = iter[Symbol.iterator]();
   return (function recur() {
@@ -42,17 +42,18 @@ export const take = curry((l, iter) => {
     return res;
   })();
 });
-export const join = curry((sep = ',', iter) =>
-  reduce((a, b) => `${a}${sep}${b}`, iter)
+_.join = _.curry((sep = ',', iter) =>
+  _.reduce((a, b) => `${a}${sep}${b}`, iter)
 );
-export const isIterable = a => a && a[Symbol.iterator];
+const isIterable = a => a && a[Symbol.iterator];
+
 export const L = {};
-L.map = curry(function* (f, iter) {
-  for (const a of iter) yield go1(a, f);
+L.map = _.curry(function* (f, iter) {
+  for (const a of iter) yield _.go1(a, f);
 });
-L.filter = curry(function* (f, iter) {
+L.filter = _.curry(function* (f, iter) {
   for (const a of iter) {
-    const b = go1(a, f);
+    const b = _.go1(a, f);
     if (b instanceof Promise) yield b.then(b => (b ? a : Promise.reject(nop)));
     else if (b) yield a;
   }
@@ -77,25 +78,31 @@ L.deepFlat = function* f(iter) {
     if (isIterable(a)) yield* f(a);
     else yield a;
 };
-L.flatMap = curry(pipe(L.map, L.flatten));
+L.flatMap = _.curry(_.pipe(L.map, L.flatten));
+
 export const C = {};
 const noop = () => {};
 const catchNoop = arr => {
   arr.forEach(a => (a instanceof Promise ? a.catch(noop) : a));
   return arr;
 };
-C.reduce = curry((f, acc, iter) =>
-  iter ? reduce(f, acc, catchNoop([...iter])) : reduce(f, catchNoop([...acc]))
+C.reduce = _.curry((f, acc, iter) =>
+  iter
+    ? _.reduce(f, acc, catchNoop([...iter]))
+    : _.reduce(f, catchNoop([...acc]))
 );
-C.take = curry((l, iter) => take(l, catchNoop([...iter])));
+C.take = _.curry((l, iter) => _.take(l, catchNoop([...iter])));
 C.takeAll = C.take(Infinity);
-C.map = curry(pipe(L.map, C.takeAll));
-C.filter = curry(pipe(L.filter, C.takeAll));
-export const takeAll = take(Infinity);
-export const takeOne = take(1);
-export const map = curry(pipe(L.map, takeAll));
-export const filter = curry(pipe(L.filter, takeAll));
-export const find = curry(pipe(L.filter, takeOne, ([a]) => a));
-export const flatten = pipe(L.flatten, takeAll);
-export const deepFlat = pipe(L.deepFlat, takeAll);
-export const flatMap = curry(pipe(L.flatMap, flatten));
+C.map = _.curry(_.pipe(L.map, C.takeAll));
+C.filter = _.curry(_.pipe(L.filter, C.takeAll));
+
+_.takeAll = _.take(Infinity);
+_.takeOne = _.take(1);
+_.map = _.curry(_.pipe(L.map, _.takeAll));
+_.filter = _.curry(_.pipe(L.filter, _.takeAll));
+_.find = _.curry(_.pipe(L.filter, _.takeOne, ([a]) => a));
+_.flatten = _.pipe(L.flatten, _.takeAll);
+_.deepFlat = _.pipe(L.deepFlat, _.takeAll);
+_.flatMap = _.curry(_.pipe(L.flatMap, _.flatten));
+_.object = entries =>
+  _.reduce((obj, [k, v]) => ((obj[k] = v), obj), {}, entries);
