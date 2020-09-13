@@ -1,6 +1,8 @@
-export const _ = {};
 export const log = console.log;
-_.curry = f => (a, ..._) => (_.length ? f(a, ..._) : (..._) => f(a, ..._));
+export const _ = {};
+
+_.curry = f => (a, ...arg) =>
+  arg.length ? f(a, ...arg) : (...arg) => f(a, ...arg);
 _.go = (...args) => _.reduce((a, f) => f(a), args);
 _.go1 = (a, f) => (a instanceof Promise ? a.then(f) : f(a));
 _.pipe = (f, ...fs) => (...as) => _.go(f(...as), ...fs);
@@ -45,7 +47,14 @@ _.take = _.curry((l, iter) => {
 _.join = _.curry((sep = ',', iter) =>
   _.reduce((a, b) => `${a}${sep}${b}`, iter)
 );
-const isIterable = a => a && a[Symbol.iterator];
+_.range = l => {
+  let i = -1;
+  let res = [];
+  while (++i < l) {
+    res.push(i);
+  }
+  return res;
+};
 
 export const L = {};
 L.map = _.curry(function* (f, iter) {
@@ -67,6 +76,9 @@ L.keys = function* (obj) {
 L.values = function* (obj) {
   for (const k in obj) yield obj[k];
 };
+
+const isIterable = a => a && a[Symbol.iterator];
+
 L.flatten = function* (iter) {
   for (const a of iter) {
     if (isIterable(a)) yield* a;
@@ -79,6 +91,12 @@ L.deepFlat = function* f(iter) {
     else yield a;
 };
 L.flatMap = _.curry(_.pipe(L.map, L.flatten));
+L.range = function* (l) {
+  let i = -1;
+  while (++i < l) {
+    yield i;
+  }
+};
 
 export const C = {};
 const noop = () => {};
@@ -86,6 +104,7 @@ const catchNoop = arr => {
   arr.forEach(a => (a instanceof Promise ? a.catch(noop) : a));
   return arr;
 };
+
 C.reduce = _.curry((f, acc, iter) =>
   iter
     ? _.reduce(f, acc, catchNoop([...iter]))
@@ -104,5 +123,23 @@ _.find = _.curry(_.pipe(L.filter, _.takeOne, ([a]) => a));
 _.flatten = _.pipe(L.flatten, _.takeAll);
 _.deepFlat = _.pipe(L.deepFlat, _.takeAll);
 _.flatMap = _.curry(_.pipe(L.flatMap, _.flatten));
+_.each = _.curry((f, iter) => {
+  for (const a of iter) f(a);
+});
 _.object = entries =>
   _.reduce((obj, [k, v]) => ((obj[k] = v), obj), {}, entries);
+_.mapObject = (f, obj) =>
+  _.go(
+    obj,
+    L.entries,
+    L.map(([k, v]) => [k, f(v)]),
+    _.object
+  );
+_.pick = (ks, obj) =>
+  _.go(
+    ks,
+    _.map(k => [k, obj[k]]),
+    _.filter(([k, v]) => v !== undefined),
+    _.object
+  );
+_.indexBy = (f, iter) => _.reduce((obj, a) => ((obj[f(a)] = a), obj), {}, iter);
