@@ -224,36 +224,41 @@ export const etcExample = () => {
     //* 결제된 결제모듈측 payments 가져온다.
     //* page 단위로 가져와서,
     //* 결제 데이터가 있을 때까지 모두 가져와서 하나로 합친다.
-    const payments = await _.go(
-      L.range(1, Infinity),
-      L.map(Impt.getPayments),
-      L.takeUntil(({ length }) => length < 3),
-      _.flat
-    );
-
+    // const payments = await _.go(
+    //   L.range(1, Infinity),
+    //   L.map(Impt.getPayments),
+    //   L.takeUntil(({ length }) => length < 3),
+    //   _.flat
+    // );
     //* 결재가 실제로 완료된 가맹점 측 주문서 아이디를 가져온다.
-    const order_ids = await _.go(
-      payments,
-      _.map(p => p.order_id),
-      DB.getOrders,
-      _.map(({ id }) => id)
-    );
-
+    // const order_ids = await _.go(
+    //   payments,
+    //   _.map(p => p.order_id),
+    //   DB.getOrders,
+    //   _.map(({ id }) => id)
+    // );
     //* 결제모듈의 payments와 가맹점의 주문서를 비교해서
     //* 결제를 취소해야할 아이디들을 모아서
     //* 결제 취소 api를 실행
-    await _.go(
-      payments,
-      L.reject(p => order_ids.includes(p.order_id)),
-      L.map(p => p.imp_id),
-      L.map(Impt.cancelPayment),
-      _.each(log)
-    );
+    // await _.go(
+    //   payments,
+    //   L.reject(p => order_ids.includes(p.order_id)),
+    //   L.map(p => p.imp_id),
+    //   L.map(Impt.cancelPayment),
+    //   _.each(log)
+    // );
   };
 
   //* 7초에 한번 실행
   //* 7초보다 더 걸리면, job이 끝날 때까지
-  (function recur() {
-    Promise.all([_.delay(7000, undefined), job()]).then(recur);
-  })();
+  // (function recur() {
+  //   Promise.all([_.delay(7000, undefined), job()]).then(recur);
+  // })();
+
+  // TODO: ES6 템플릿 리터럴 활용
+  const a = 10;
+  const b = 5;
+  // log(`${a} + ${b} = ${a + b}`);
+
+  // TODO: 이미지 목록 그리기
 };
