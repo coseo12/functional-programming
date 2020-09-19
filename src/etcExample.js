@@ -260,5 +260,44 @@ export const etcExample = () => {
   const b = 5;
   // log(`${a} + ${b} = ${a + b}`);
 
-  // TODO: 이미지 목록 그리기
+  // TODO: 이미지 목록 가져오기
+
+  const getImageList = () => {
+    const arr = [];
+    for (let i = 1; i < 100; i++) {
+      const obj = {};
+      obj.name = `image${i}`;
+      obj.url = `https://picsum.photos/id/${i}/200/300`;
+      arr.push(obj);
+    }
+    return arr;
+  };
+
+  const imageList = getImageList();
+
+  const Images = {};
+
+  const string = iter => _.reduce((a, b) => `${a}${b}`, iter);
+
+  const strMap = _.curry(_.pipe(L.map, string));
+
+  Images.fetch = () =>
+    new Promise(resolve => setTimeout(() => resolve(imageList), 200));
+  Images.tmpl = imgs => `
+    <div class="images">
+      ${strMap(
+        img => `
+        <div class="image>
+          <div class="box">
+            <img src="${img.url}" alt="" />
+          </div>
+          <div class="name">${img.name}</div>
+        </div>
+      `,
+        imgs
+      )}
+    </div>
+  `;
+
+  // _.go(Images.fetch(), Images.tmpl, log);
 };
